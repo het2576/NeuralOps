@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Base */
+  --background:        #09090b;
+  --foreground:        #fafafa;
+  
+  /* Cards */
+  --card:              #09090b;
+  --card-foreground:   #fafafa;
+  
+  /* Surfaces */
+  --surface-1:         #111113;
+  --surface-2:         #18181b;
+  --surface-3:         #1f1f23;
+  
+  /* Borders */
+  --border:            #27272a;
+  --border-light:      #3f3f46;
+  
+  /* Text */
+  --text-primary:      #fafafa;
+  --text-secondary:    #a1a1aa;
+  --text-muted:        #71717a;
+  --text-disabled:     #52525b;
+  
+  /* Brand */
+  --brand:             #06b6d4;
+  --brand-foreground:  #ffffff;
+  
+  /* Semantic */
+  --success:           #22c55e;
+  --success-bg:        rgba(34,197,94,0.08);
+  --success-border:    rgba(34,197,94,0.2);
+  
+  --warning:           #f59e0b;
+  --warning-bg:        rgba(245,158,11,0.08);
+  --warning-border:    rgba(245,158,11,0.2);
+  
+  --danger:            #ef4444;
+  --danger-bg:         rgba(239,68,68,0.08);
+  --danger-border:     rgba(239,68,68,0.2);
+  
+  --info:              #3b82f6;
+  --info-bg:           rgba(59,130,246,0.08);
+  --info-border:       rgba(59,130,246,0.2);
+  
+  /* Radius */
+  --radius-sm:   6px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.5);
+  
+  /* Typography */
+  --font-sans: 'Geist', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { 
+  background: var(--border-light);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-disabled);
+}
+
+/* Custom range slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-3);
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--brand);
+  cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(6,182,212,0.2);
+  transition: box-shadow 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 5px rgba(6,182,212,0.25);
+}
+
+/* Live pulse animation */
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Traffic flow node status dot pulse */
+@keyframes tfPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.75); }
+}
+
+/* Spin animation for loaders */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Mobile overrides */
+@media (max-width: 768px) {
+  body {
+    font-size: 13px;
+  }
+
+  /* Hide scrollbar on tab bar */
+  .mobile-tab-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .mobile-tab-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+

@@ -1,0 +1,13 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+venv/
+.venv/
+__pycache__/
+*.db
+.DS_Store
+
+# Production markdown
+prd.md
