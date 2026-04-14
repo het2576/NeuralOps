@@ -150,9 +150,9 @@ async def main():
     prompts = []
     for _ in range(10):
         prompts.append(random.choice(SIMPLE_PROMPTS))
-    for _ in range(5):
+    for _ in range(4):
         prompts.append(random.choice(MEDIUM_PROMPTS))
-    for _ in range(3):
+    for _ in range(1):
         prompts.append(random.choice(COMPLEX_PROMPTS))
 
     random.shuffle(prompts)
