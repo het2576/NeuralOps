@@ -103,7 +103,29 @@ async def route_request(req: RouteRequest):
 
     # d. Check for error
     if response.get("error"):
-        raise HTTPException(status_code=500, detail=f"Model error: {response['error']}")
+        print(f"ROUTE DEGRADED MODE: {response['error']}")
+        degraded_message = (
+            "NeuralOps could not reach the model provider right now. "
+            "Please try again in a minute."
+        )
+        return RouteResponse(
+            request_id=str(uuid.uuid4()),
+            response=degraded_message,
+            model_used=model_config["model_name"],
+            model_key=model_config["model_key"],
+            tier=model_config["tier"],
+            complexity=classification["complexity"],
+            confidence=round(classification["confidence"], 6),
+            routing_reason=f"Degraded mode: {response['error']}",
+            latency_ms=0,
+            input_tokens=0,
+            output_tokens=0,
+            actual_cost=0.0,
+            cost_without_neuralops=0.0,
+            savings=0.0,
+            savings_percentage=0.0,
+            is_fallback=True,
+        )
 
     # e. Calculate costs
     cost_data = calculate_costs(
@@ -199,10 +221,13 @@ async def battle(req: BattleRequest):
 
     # c. Build BattleResult list
     battle_results = []
+    model_errors = []
     for i, result in enumerate(raw_results):
         if isinstance(result, Exception):
+            model_errors.append(f"{models_to_use[i]['model_name']}: {str(result)}")
             continue
         if result.get("error"):
+            model_errors.append(f"{models_to_use[i]['model_name']}: {result['error']}")
             continue
 
         config = models_to_use[i]
@@ -230,7 +255,41 @@ async def battle(req: BattleRequest):
         )
 
     if not battle_results:
-        raise HTTPException(status_code=500, detail="All models failed during battle")
+        # Degraded mode: keep the app responsive even if all upstream providers fail.
+        unavailable_message = (
+            "NeuralOps could not reach any model provider right now. "
+            "Please try again in a minute."
+        )
+        placeholder_results = [
+            BattleResult(
+                model_name=m["model_name"],
+                model_key=m["model_key"],
+                tier=m["tier"],
+                response=unavailable_message,
+                latency_ms=0,
+                input_tokens=0,
+                output_tokens=0,
+                actual_cost=0.0,
+                cost_without_neuralops=0.0,
+                savings_percentage=0.0,
+                composite_score=0.0,
+            )
+            for m in models_to_use
+        ]
+
+        if model_errors:
+            print(f"BATTLE DEGRADED MODE: {' | '.join(model_errors)}")
+
+        return BattleResponse(
+            results=placeholder_results,
+            neuralops_choice={
+                "model_name": placeholder_results[0].model_name,
+                "winner_reason": unavailable_message,
+                "composite_score": 0.0,
+            },
+            complexity="MEDIUM",
+            complexity_reason="Degraded mode: all upstream model calls failed",
+        )
 
     # d. Classify prompt complexity
     classification = await classify_request(req.text)
